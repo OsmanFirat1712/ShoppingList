@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ShoppingListOF</string>
+    <string name="Einkaufsliste">Einkaufsliste</string>
+    <string name="anzahl_der_eintr_ge">Anzahl der Einträge</string>
+    <string name="listen_bearbeiten">Listen bearbeiten</string>
+    <string name="name">Name</string>
+    <string name="neue_liste">Neue Liste</string>
+    <string name="Supermarkt">Supermarkt</string>
+    <string name="Bücher">Bücher</string>
+    <string name="Drogerie">Drogerie</string>
+    <string name="preference_file_key">com.example.shoppinglistof.PREFERENCE_FILE_KEY</string>
+</resources>

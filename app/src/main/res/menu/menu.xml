@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/extras"
+        app:showAsAction="withText"
+        android:title="@string/neue_liste" />
+
+    <item
+        android:id="@+id/extras2"
+        app:showAsAction="withText"
+        android:title="@string/listen_bearbeiten" />
+
+    <item
+        android:id="@+id/extras3"
+        app:showAsAction="withText"
+        android:title="@string/name" />
+
+    <item
+        android:id="@+id/extras4"
+        android:title="@string/anzahl_der_eintr_ge"
+        app:showAsAction="collapseActionView" />
+
+</menu>
