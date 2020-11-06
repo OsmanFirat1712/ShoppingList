@@ -103,22 +103,22 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         int icons;
         switch (shoppingList.getIcon()){
-            case 0:
+            case 1:
                 icons =  R.drawable.basket_24;
                 break;
 
-            case 1:
+            case 2:
                 icons = R.drawable.book_24;
                 break;
 
-            case 2:
+            case 3:
                 icons = R.drawable.store_24;
                 break;
 
             default:
                 icons = 0;
         }
-
+        holder.textView.setTextColor(shoppingList.getColor());
         holder.imageView.setImageResource(icons);
         holder.textView.setText(shoppingList.getName());
         holder.imageView.setColorFilter(shoppingList.getColor());
@@ -128,32 +128,43 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
             @Override
             public boolean onLongClick(View v) {
-               final  AlertDialog  dialog = new AlertDialog.Builder(context)
-                        .setTitle("Title")
-                        .setMessage("Wollen Sie es wirklich Löschen?")
-                        .setPositiveButton("Ok",  null)
-                        .setNegativeButton("Cancel",  null)
+                final AlertDialog dialog = new AlertDialog.Builder(context)
+                        .setTitle(shoppingList.getName())
+                        .setMessage("Wollen Sie die ausgewählte Liste wirklich Löschen?")
+                        .setPositiveButton("Ok", null)
+                        .setNegativeButton("Cancel", null)
                         .show();
 
                 Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                     shoppingLists.remove(shoppingList);
-                     dialog.dismiss();
-                     notifyItemRemoved(position);
-                     notifyDataSetChanged();
+                        shoppingLists.remove(shoppingList);
+                        dialog.dismiss();
+                        notifyItemRemoved(position);
+                        notifyDataSetChanged();
                     }
                 });
 
 
+               /* holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        AlertDialog.Builder alertDialogBuilderLabelEdit = new AlertDialog.Builder(getContext());
+                        alertDialogBuilderLabelEdit.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Boolean isSucces =
+                                        shoppingList.u
+                            }
+                        })
 
-
-
+                        return false;
+                    }
+                });
+*/
 
                 return false;
-
-
             }
 
         });

@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -33,7 +35,7 @@ public class ListEditFragment extends Fragment {
     private Button addButton;
     private View dice;
     ImageView imageView;
-    private int flag;
+    private int random;
     private ConstraintLayout constraintLayout;
     private int mDefaultColor;
     private View colorPicker;
@@ -47,6 +49,13 @@ public class ListEditFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.Liste);
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -54,7 +63,7 @@ public class ListEditFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        flag = 0;
+        random = 0;
         View view = inflater.inflate(R.layout.shoppinglistedit, container, false);
 
         return view;
@@ -78,19 +87,24 @@ public class ListEditFragment extends Fragment {
         constraintLayout = view.findViewById(R.id.constraint);
         mDefaultColor = ContextCompat.getColor(getActivity(), R.color.design_default_color_on_primary);
         colorPicker = view.findViewById(R.id.colorPicker);
-
         super.onViewCreated(view, savedInstanceState);
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dataStorage();
+                addList();
             }
         });
     }
 
-    public void dataStorage() {
-        listService.add(editText.getText().toString(), flag, mDefaultColor);
+    public void addList() {
+
+        if (editText.getText().toString().isEmpty()) {
+            Toast.makeText(getContext(), "Bitte noch eine Modellnamen eingeben", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        listService.add(editText.getText().toString(), random, mDefaultColor);
         getActivity().getSupportFragmentManager().popBackStack();
     }
 
@@ -101,6 +115,7 @@ public class ListEditFragment extends Fragment {
             return true;
         }
 
+
       else   if (item.getItemId() == R.id.colorPicker) {
             mDefaultColor = ContextCompat.getColor(getActivity(), R.color.material_on_primary_emphasis_medium);
             openColorPicker();
@@ -108,21 +123,23 @@ public class ListEditFragment extends Fragment {
 
        else if (item.getItemId() == R.id.dice) {
 
-            if (flag == 0) {
+            if (random == 0) {
                 imageView.setImageResource(R.drawable.basket_24);
-                flag = 1;
-            } else if (flag == 1) {
+                random = 1;
+            } else if (random == 1) {
                 imageView.setImageResource(R.drawable.book_24   );
-                flag = 2;
-            } else if (flag == 2) {
+                random  = 2;
+            } else if (random == 2) {
                 imageView.setImageResource(R.drawable.store_24);
-                flag = 0;
+                random = 0;
             }
 
 
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 
     public void openColorPicker() {
         AmbilWarnaDialog colorPicker = new AmbilWarnaDialog(getActivity(), mDefaultColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {

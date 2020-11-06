@@ -42,7 +42,7 @@ public class SharedPrefdataStorage implements ListService {
     @Override
     public void add(String name, int icon, int color) {
         List<ShoppingList> shoppingLists = getShoppingList(SortOrder.Alphabetical);
-        shoppingLists.add(new ShoppingList(UUID.randomUUID(),name, icon, color, new ArrayList<ShoppingListEntry>(), new ArrayList<ShoppingListEntry>()));
+        shoppingLists.add(new ShoppingList(UUID.randomUUID(),name, icon, color));
         safeList(shoppingLists);
     }
 

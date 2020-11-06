@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -101,18 +102,21 @@ public class MainFragment extends Fragment {
     public void addicontoolbar() {
         ActionBar actionbar = ((MainActivity) getActivity()).getSupportActionBar();
         actionbar.setHomeButtonEnabled(false);
-        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setDisplayHomeAsUpEnabled(false);
         actionbar.setTitle(R.string.Einkaufsliste);
 
-    }/*
-
-    AlertDialog  dialog = new AlertDialog.Builder(this.getActivity())
-            .setTitle("Title")
-            .setMessage("Yarrak")
-            .setPositiveButton("Ok", null)
-            .show();
+    }
 
 }
-*/
 
-}
+
+/*
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.extras3) {
+
+        }
+
+    }
+}*/
