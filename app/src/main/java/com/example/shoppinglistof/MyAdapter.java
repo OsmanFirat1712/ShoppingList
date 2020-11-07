@@ -22,19 +22,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > implements CallBack {
 
-
+    private CallBack callBack;
     private Context context;
     private ListService listService;
 
     public List <ShoppingList> shoppingLists;
 
     public MyAdapter(List<ShoppingList> shoppingLists, ListService listService, Context context) {
-
         this.shoppingLists = shoppingLists;
         this.context = context;
         this.listService = listService;
+        this.callBack = callBack;
 
     }
 
@@ -65,9 +65,10 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
         this.context = context;
     }
 
+    @Override
+    public void getList(List<ShoppingList> checkedUnchecked) {
 
-
-
+    }
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -143,6 +144,13 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
                         dialog.dismiss();
                         notifyItemRemoved(position);
                         notifyDataSetChanged();
+                    }
+                });
+
+                holder.imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        callBack.getList(shoppingLists);
                     }
                 });
 

@@ -65,7 +65,7 @@ public class MainFragment extends Fragment {
         recyclerView = getActivity().findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         listService = ((MyApp) getActivity().getApplication()).getListService();
-        myAdapter = new MyAdapter(listService.getShoppingList(ListService.SortOrder.Alphabetical), this.listService, getContext());
+        myAdapter = new MyAdapter(listService.getShoppingList(ListService.SortOrder.Alphabetical),  this.listService, getContext());
         recyclerView.setAdapter(myAdapter);
 
 

@@ -28,7 +28,7 @@ import java.util.UUID;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class ListEditFragment extends Fragment {
+public class ListEditFragment extends Fragment implements CallBack {
 
     private EditText editText;
     private ListService listService;
@@ -155,4 +155,19 @@ public class ListEditFragment extends Fragment {
         });
         colorPicker.show();
     }
+
+
+    @Override
+    public void getList(ShoppingList checkedUnchecked) {
+
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        ListEntriesFragment details = new ListEntriesFragment();
+        Bundle arg = new Bundle();
+        arg.putString(KEYS.CHECKED, Utilities.toString(checkedUnchecked));
+        details.setArguments(arg);
+        transaction.replace(R.id.container, details);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
     }
+}
