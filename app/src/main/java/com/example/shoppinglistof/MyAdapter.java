@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -30,13 +31,17 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > imp
 
     public List <ShoppingList> shoppingLists;
 
-    public MyAdapter(List<ShoppingList> shoppingLists, ListService listService, Context context) {
+    public MyAdapter(List<ShoppingList> shoppingLists, ListService listService, Context context, CallBack callBack) {
         this.shoppingLists = shoppingLists;
         this.context = context;
         this.listService = listService;
         this.callBack = callBack;
 
     }
+
+
+
+
 
     public ListService getListService() {
         return listService;
@@ -65,10 +70,12 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > imp
         this.context = context;
     }
 
+
     @Override
-    public void getList(List<ShoppingList> checkedUnchecked) {
+    public void getList(ShoppingList checkedUnchecked) {
 
     }
+
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -81,8 +88,6 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > imp
             imageView = itemView.findViewById(R.id.ivicon);
             editText = itemView.findViewById(R.id.etPrice);
             textView = itemView.findViewById(R.id.tvName);
-
-
 
         }
     }
@@ -150,9 +155,13 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > imp
                 holder.imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        callBack.getList(shoppingLists);
+                        callBack.getList(shoppingList);
                     }
                 });
+
+
+
+
 
 
                /* holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -184,7 +193,7 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > imp
     public int getItemCount() {
         return shoppingLists.size();
     }
-    public void add ( List<ShoppingList> newList){
+    public void add2 ( List<ShoppingList> newList){
         this.shoppingLists = newList;
     }
 

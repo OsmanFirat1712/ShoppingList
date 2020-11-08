@@ -28,7 +28,7 @@ import java.util.UUID;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class ListEditFragment extends Fragment implements CallBack {
+public class ListEditFragment extends Fragment {
 
     private EditText editText;
     private ListService listService;
@@ -50,12 +50,12 @@ public class ListEditFragment extends Fragment implements CallBack {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.Liste);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.Liste);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -87,7 +87,9 @@ public class ListEditFragment extends Fragment implements CallBack {
         constraintLayout = view.findViewById(R.id.constraint);
         mDefaultColor = ContextCompat.getColor(getActivity(), R.color.design_default_color_on_primary);
         colorPicker = view.findViewById(R.id.colorPicker);
+
         super.onViewCreated(view, savedInstanceState);
+
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,25 +112,20 @@ public class ListEditFragment extends Fragment implements CallBack {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-           if (item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             ((MainActivity) getActivity()).getSupportFragmentManager().popBackStack();
             return true;
-        }
-
-
-      else   if (item.getItemId() == R.id.colorPicker) {
+        } else if (item.getItemId() == R.id.colorPicker) {
             mDefaultColor = ContextCompat.getColor(getActivity(), R.color.material_on_primary_emphasis_medium);
             openColorPicker();
-        }
-
-       else if (item.getItemId() == R.id.dice) {
+        } else if (item.getItemId() == R.id.dice) {
 
             if (random == 0) {
                 imageView.setImageResource(R.drawable.basket_24);
                 random = 1;
             } else if (random == 1) {
-                imageView.setImageResource(R.drawable.book_24   );
-                random  = 2;
+                imageView.setImageResource(R.drawable.book_24);
+                random = 2;
             } else if (random == 2) {
                 imageView.setImageResource(R.drawable.store_24);
                 random = 0;
@@ -138,7 +135,6 @@ public class ListEditFragment extends Fragment implements CallBack {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
     public void openColorPicker() {
@@ -157,17 +153,4 @@ public class ListEditFragment extends Fragment implements CallBack {
     }
 
 
-    @Override
-    public void getList(ShoppingList checkedUnchecked) {
-
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        ListEntriesFragment details = new ListEntriesFragment();
-        Bundle arg = new Bundle();
-        arg.putString(KEYS.CHECKED, Utilities.toString(checkedUnchecked));
-        details.setArguments(arg);
-        transaction.replace(R.id.container, details);
-        transaction.addToBackStack(null);
-        transaction.commit();
-
-    }
 }

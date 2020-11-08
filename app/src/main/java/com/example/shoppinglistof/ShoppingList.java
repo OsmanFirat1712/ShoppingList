@@ -7,12 +7,13 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class ShoppingList {
+public class ShoppingList implements Serializable {
 
     enum Category {
         Unchecked,

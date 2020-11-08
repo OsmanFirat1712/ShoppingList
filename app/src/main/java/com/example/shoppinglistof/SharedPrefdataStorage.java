@@ -42,20 +42,28 @@ public class SharedPrefdataStorage implements ListService {
     @Override
     public void add(String name, int icon, int color) {
         List<ShoppingList> shoppingLists = getShoppingList(SortOrder.Alphabetical);
-        shoppingLists.add(new ShoppingList(UUID.randomUUID(),name, icon, color));
+        shoppingLists.add(new ShoppingList(UUID.randomUUID(),name, icon, color, new ArrayList<ShoppingListEntry>(), new ArrayList<ShoppingListEntry>()));
         safeList(shoppingLists);
     }
 
     @Override
     public void remove(UUID listId) {
 
+
+
     }
 
     @Override
     public void addEntry(UUID listId, String name) {
 
+        List<ShoppingList> shoppingLists = getShoppingList(SortOrder.Alphabetical);
+        for (int i = 0; i < shoppingLists.size(); i++) {
+            if (listId.equals(shoppingLists.get(i).getId())) {
+                shoppingLists.get(i).getUncheckedEntries().add(new ShoppingListEntry(UUID.randomUUID(), name, false));
+                safeList(shoppingLists);
+            }
+        }
     }
-
     @Override
     public void checkEntry(UUID listId, int row) {
 

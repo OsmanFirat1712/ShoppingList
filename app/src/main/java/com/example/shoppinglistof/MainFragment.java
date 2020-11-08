@@ -25,12 +25,13 @@ import com.github.dhaval2404.colorpicker.model.ColorShape;
 import com.github.dhaval2404.colorpicker.model.ColorSwatch;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements CallBack, Serializable {
     private FloatingActionButton floatingActionButton;
     private ListService listService;
     private MyAdapter myAdapter;
@@ -65,7 +66,7 @@ public class MainFragment extends Fragment {
         recyclerView = getActivity().findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         listService = ((MyApp) getActivity().getApplication()).getListService();
-        myAdapter = new MyAdapter(listService.getShoppingList(ListService.SortOrder.Alphabetical),  this.listService, getContext());
+        myAdapter = new MyAdapter(listService.getShoppingList(ListService.SortOrder.Alphabetical),  this.listService, getContext(),this);
         recyclerView.setAdapter(myAdapter);
 
 
@@ -81,7 +82,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onResume() {
-        myAdapter.add(listService.getShoppingList(ListService.SortOrder.Alphabetical));
+        myAdapter.add2(listService.getShoppingList(ListService.SortOrder.Alphabetical));
         myAdapter.notifyDataSetChanged();
         super.onResume();
     }
@@ -91,6 +92,7 @@ public class MainFragment extends Fragment {
         listService.safeList(myAdapter.getShoppingLists());
         super.onPause();
     }
+
 
     private void startDetailListFragment() {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -107,6 +109,19 @@ public class MainFragment extends Fragment {
 
     }
 
+    @Override
+    public void getList(ShoppingList checkedUnchecked) {
+
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        ListEntriesFragment details = new ListEntriesFragment();
+        Bundle arg = new Bundle();
+        arg.putSerializable(KEYS.CHECKED,checkedUnchecked);
+        details.setArguments(arg);
+        transaction.replace(R.id.container, details);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+    }
 }
 
 
