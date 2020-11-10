@@ -5,35 +5,42 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.example.shoppinglistof.KEYS.CHECKED;
 
 public class ListEntriesFragment extends Fragment implements BackCall {
-    private ShoppingList checkedUnchecked;
     private ListEntriesAdapter listEntriesAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private ListService listService;
     private GridLayoutManager gridLayoutManager;
-    private List<ShoppingList> shoppingListEntries = new ArrayList<>();
-    private FloatingActionButton floatingActionButton2;
+    private List<ShoppingListEntry> allEntrys;
+    private FloatingActionButton fbtalert;
     private RecyclerView recyclerViewCheckedunChecked;
-    private EditText editText;
-    private Button button;
+    private UUID uuid;
+    private ShoppingList shoppingList;
+    private TextView tventry;
 
     public ListEntriesFragment() {
 
@@ -43,10 +50,15 @@ public class ListEntriesFragment extends Fragment implements BackCall {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
+        addicontoolbar();
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
-            checkedUnchecked = (ShoppingList) bundle.getSerializable(CHECKED);
-
+            uuid = (UUID) bundle.getSerializable(CHECKED);
         }
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     @Nullable
@@ -64,45 +76,44 @@ public class ListEntriesFragment extends Fragment implements BackCall {
         super.onViewCreated(view, savedInstanceState);
         listService = ((MyApp) getActivity().getApplication()).getListService();
         recyclerViewCheckedunChecked = getActivity().findViewById(R.id.my_recycler_view_unchecked);
+
         recyclerViewCheckedunChecked.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        listEntriesAdapter = new ListEntriesAdapter(this.listService, getContext(), this);
         recyclerViewCheckedunChecked.setAdapter(listEntriesAdapter);
-        listEntriesAdapter = new ListEntriesAdapter(checkedUnchecked.getUncheckedEntries(), this.listService, getContext(),this);
-        checkedUnchecked.getUncheckedEntries();
-/*
-        button = view.findViewById(R.id.button);
-        editText=view.findViewById(R.id.editTextTextPersonName);
-*/
 
+        fbtalert = view.findViewById(R.id.fbtalert);
+        tventry = view.findViewById(R.id.ivCheck);
 
-        floatingActionButton2 = view.findViewById(R.id.floatingButton2);
-
-
-        floatingActionButton2.setOnClickListener(new View.OnClickListener() {
+        fbtalert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 View view2 = LayoutInflater.from(getContext()).inflate(R.layout.alertdialog, null);
                 final EditText editText = view2.findViewById(R.id.textView);
                 Button button = view2.findViewById(R.id.btsave);
+                builder.setView(view2);
+                AlertDialog dialog = builder.create();
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        for (int i = 0; i < shoppingListEntries.size(); i++) {
-                            listService.addEntry(shoppingListEntries.get(i).getId(), editText.getText().toString());
-                        }
-                        listEntriesAdapter.add(checkedUnchecked.getCheckedEntries());
+                        listService.addEntry(uuid, editText.getText().toString());
+                        listEntriesAdapter.notifyDataSetChanged();
+                        allEntrys = new ArrayList<>();
+                        shoppingList = listService.shoppingList(uuid);
+                        allEntrys.addAll(shoppingList.getCheckedEntries());
+                        allEntrys.addAll(shoppingList.getUncheckedEntries());
+                        listEntriesAdapter.addsavelist(allEntrys);
                         listEntriesAdapter.notifyDataSetChanged();
                         getActivity().getSupportFragmentManager();
+                        dialog.dismiss();
 
                     }
                 });
-                builder.setView(view2);
-                AlertDialog dialog = builder.create();
+
                 dialog.show();
+
             }
         });
-
-
 
     }
 
@@ -112,34 +123,11 @@ public class ListEntriesFragment extends Fragment implements BackCall {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-/*    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.extras:
-                final EditText editText = new EditText(getContext());
-                AlertDialog dialog = new AlertDialog.Builder(getContext())
-                        .setTitle("Add New List")
-                        .setMessage("sure")
-                        .setView(editText)
-                        .setPositiveButton("ADD", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String string = String.valueOf(editText.getText());
-
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .show();
-        }
-
-
-        return super.onOptionsItemSelected(item);
-    }*/
-
     @Override
     public void onResume() {
-        listEntriesAdapter.notifyDataSetChanged();
         super.onResume();
+        setShopping();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(shoppingList.getName());
     }
 
     @Override
@@ -148,11 +136,49 @@ public class ListEntriesFragment extends Fragment implements BackCall {
     }
 
     @Override
-    public void addEntry(ShoppingListEntry shoppingListEntry) {
+    public void addEntry(ShoppingListEntry shoppingListEntry, int position) {
+
+        if (shoppingListEntry.isChecked()) {
+            listService.uncheckEntry(uuid, position);
+        } else {
+            listService.checkEntry(uuid, position);
+        }
+        setShopping();
+    }
+
+    @Override
+    public void removeEntry(ShoppingListEntry shoppingListEntry) {
+        listService.removeEntry(uuid, shoppingListEntry.getId());
+        setShopping();
+    }
 
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            ((MainActivity) getActivity()).getSupportFragmentManager().popBackStack();
+        }
+        return false;
+    }
+
+    public  void setShopping(){
+        allEntrys = new ArrayList<>();
+        shoppingList = listService.shoppingList(uuid);
+        allEntrys.addAll(shoppingList.getUncheckedEntries());
+        allEntrys.addAll(shoppingList.getCheckedEntries());
+        listEntriesAdapter.addsavelist(allEntrys);
+        listEntriesAdapter.notifyDataSetChanged();
+    }
+
+    public void addicontoolbar() {
+        ActionBar actionbar = ((MainActivity) getActivity()).getSupportActionBar();
+        actionbar.setHomeButtonEnabled(false);
+        actionbar.setDisplayHomeAsUpEnabled(false);
+        actionbar.setTitle(R.string.Einkaufsliste);
 
     }
 
 
 }
+
+

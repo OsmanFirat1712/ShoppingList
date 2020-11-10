@@ -27,18 +27,19 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class MainFragment extends Fragment implements CallBack, Serializable {
+public class MainFragment extends Fragment implements CallBack {
     private FloatingActionButton floatingActionButton;
     private ListService listService;
     private MyAdapter myAdapter;
     private GridLayoutManager gridLayoutManager;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-
+    private ShoppingList shoppingList;
 
     public MainFragment() {
 
@@ -115,13 +116,36 @@ public class MainFragment extends Fragment implements CallBack, Serializable {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         ListEntriesFragment details = new ListEntriesFragment();
         Bundle arg = new Bundle();
-        arg.putSerializable(KEYS.CHECKED,checkedUnchecked);
+        arg.putSerializable(KEYS.CHECKED,checkedUnchecked.getId());
         details.setArguments(arg);
         transaction.replace(R.id.container, details);
         transaction.addToBackStack(null);
         transaction.commit();
 
     }
+
+    @Override
+    public void remove(UUID uuid) {
+            listService.remove(uuid);
+            myAdapter.setShoppingLists(listService.getShoppingList(ListService.SortOrder.Alphabetical));
+            myAdapter.notifyDataSetChanged();
+        }
+
+
+    @Override
+    public void editlist(ShoppingList shoppingList) {
+
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        ListEditFragment details = new ListEditFragment();
+        Bundle arg = new Bundle();
+        arg.putSerializable(KEYS.SHOPPINGLIST,shoppingList);
+        details.setArguments(arg);
+        transaction.replace(R.id.container, details);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+    }
+
 }
 
 

@@ -22,8 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > implements CallBack {
+public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
 
     private CallBack callBack;
     private Context context;
@@ -38,10 +39,6 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > imp
         this.callBack = callBack;
 
     }
-
-
-
-
 
     public ListService getListService() {
         return listService;
@@ -68,12 +65,6 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > imp
 
     public void setContext(Context context) {
         this.context = context;
-    }
-
-
-    @Override
-    public void getList(ShoppingList checkedUnchecked) {
-
     }
 
 
@@ -130,6 +121,13 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > imp
         holder.imageView.setColorFilter(shoppingList.getColor());
 
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callBack.getList(shoppingList);
+            }
+        });
+
         holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
@@ -137,57 +135,44 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > imp
                 final AlertDialog dialog = new AlertDialog.Builder(context)
                         .setTitle(shoppingList.getName())
                         .setMessage("Wollen Sie die ausgewählte Liste wirklich Löschen?")
+                        .setNeutralButton("Cancel", null)
                         .setPositiveButton("Ok", null)
-                        .setNegativeButton("Cancel", null)
+                        .setNeutralButton("Bearbeiten", null)
                         .show();
 
+                Button neutralbutton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                neutralbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        callBack.editlist(shoppingList);
+                    }
+                });
+                Button negativebutton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                negativebutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
                 Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        shoppingLists.remove(shoppingList);
+
+                        callBack.remove(shoppingList.getId());
                         dialog.dismiss();
                         notifyItemRemoved(position);
                         notifyDataSetChanged();
                     }
                 });
 
-                holder.imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        callBack.getList(shoppingList);
-                    }
-                });
 
-
-
-
-
-
-               /* holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        AlertDialog.Builder alertDialogBuilderLabelEdit = new AlertDialog.Builder(getContext());
-                        alertDialogBuilderLabelEdit.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Boolean isSucces =
-                                        shoppingList.u
-                            }
-                        })
-
-                        return false;
-                    }
-                });
-*/
 
                 return false;
             }
 
         });
     }
-
-
 
     @Override
     public int getItemCount() {

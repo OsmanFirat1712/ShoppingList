@@ -1,6 +1,8 @@
 package com.example.shoppinglistof;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,28 +25,29 @@ public class ListEntriesAdapter extends RecyclerView.Adapter<ListEntriesAdapter.
         private ListService listService;
         private BackCall backCall;
 
-/*
-        public List<ShoppingListEntry> checkedEntries;
-*/
-        public List<ShoppingListEntry> uncheckedEntries;
+
+        public List<ShoppingListEntry> unchecked;
 
 
-        public ListEntriesAdapter(List<ShoppingListEntry> uncheckedEntries, ListService listService, Context context,BackCall backCall) {
+        public ListEntriesAdapter(ListService listService, Context context,BackCall backCall) {
+
             this.context = context;
             this.listService = listService;
-            this.uncheckedEntries = uncheckedEntries;
+            this.unchecked = new ArrayList<>();
             this.backCall = backCall;
-            this.getUncheckedEntries();
 
         }
 
+    public List<ShoppingListEntry> getUnchecked() {
+        return unchecked;
+    }
 
-        public List<ShoppingListEntry> getUncheckedEntries() {
-            return uncheckedEntries;
-        }
+    public void setUnchecked(List<ShoppingListEntry> unchecked) {
+        this.unchecked = unchecked;
+    }
 
-        public void setUncheckedEntries(List<ShoppingListEntry> uncheckedEntries) {
-            this.uncheckedEntries = uncheckedEntries;
+    public void setUncheckedEntries(List<ShoppingListEntry> uncheckedEntries) {
+            this.unchecked = uncheckedEntries;
         }
 
     public BackCall getBackCall() {
@@ -55,17 +58,6 @@ public class ListEntriesAdapter extends RecyclerView.Adapter<ListEntriesAdapter.
         this.backCall = backCall;
     }
 
-        /*  public ListUnchecked(List<ShoppingList> uncheckedEntries, ListService listService, Context context) {
-        this.uncheckedEntries = uncheckedEntries;
-        this.context = context;
-        this.listService = listService;
-    }*/
-
-
-/*    public ListEntriesAdapter(ShoppingListEntry shoppingListEntry){
-        uncheckedEntries.add(shoppingListEntry);
-        notifyDataSetChanged();
-    }*/
 
     public Context getContext() {
             return context;
@@ -83,22 +75,16 @@ public class ListEntriesAdapter extends RecyclerView.Adapter<ListEntriesAdapter.
             this.listService = listService;
         }
         public static class ViewHolder extends RecyclerView.ViewHolder {
-            public ImageView imageView;
-            public TextView textView;
-            public EditText editText;
-            public EditText editText3;
-            private TextView textView2;
+            public ImageView ivCheck;
+            private TextView tvaddEntry;
             public FloatingActionButton floatingActionButton;
-            private Button button;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
 
-                textView2 = itemView.findViewById(R.id.editText12);
-                floatingActionButton = itemView.findViewById(R.id.floatingButton2);
-
-
-
+                tvaddEntry = itemView.findViewById(R.id.tventry);
+                floatingActionButton = itemView.findViewById(R.id.fbtalert);
+                ivCheck = itemView.findViewById(R.id.ivCheck);
 
             }
         }
@@ -115,44 +101,56 @@ public class ListEntriesAdapter extends RecyclerView.Adapter<ListEntriesAdapter.
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            final ShoppingListEntry shoppingList = uncheckedEntries.get(position);
+            final ShoppingListEntry listEntry = unchecked.get(position);
+            holder.tvaddEntry.setText(listEntry.getName());
 
-            holder.textView2.setText(shoppingList.getName().toString());
+            if(listEntry.isChecked()) {
+                holder.ivCheck.setVisibility(View.VISIBLE);
 
-  /*          holder.button.setOnClickListener(new View.OnClickListener() {
+            } else {
+                holder.ivCheck.setVisibility(View.GONE);
+            }
+
+            holder.tvaddEntry.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    backCall.addEntry(shoppingList);
-                    notifyDataSetChanged();
-                }
-            });*/
+                        backCall.addEntry(listEntry,position);
 
-        /*    holder.floatingActionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                     View view2 = LayoutInflater.from(getContext()).inflate(R.layout.alertdialog,null);
-
-                     builder.setView(view2);
-                     AlertDialog dialog = builder.create();
-                     dialog.show();
                 }
             });
 
+            holder.tvaddEntry.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    final AlertDialog dialog = new AlertDialog.Builder(context)
+                            .setTitle("yarrak")
+                            .setMessage("Wollen Sie die ausgewählte Liste wirklich Löschen?")
+                            .setNeutralButton("Cancel", null)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    backCall.removeEntry(listEntry);
+                                    dialog.dismiss();
+                                    notifyItemRemoved(position);
+                                    notifyDataSetChanged();
+                                }
+                            })
+                            .show();
 
-*/
 
+                    return false;
+                }
+
+            });
         }
 
         @Override
         public int getItemCount() {
-            return uncheckedEntries.size();
+        return unchecked.size();
         }
 
-
-    public void add ( List<ShoppingListEntry> newList){
-        this.uncheckedEntries = newList;
+    public void addsavelist ( List<ShoppingListEntry> newEntry){
+        this.unchecked = newEntry;
     }
-
 
     }
