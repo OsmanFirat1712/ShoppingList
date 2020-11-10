@@ -102,14 +102,7 @@ public interface ListService {
      */
     void changeName(UUID listId, String name);
 
-    /**
-     * Changes the icon of a list.
-     * <p>
-     * This function does nothing if `listId` is invalid.
-     *
-     * @param listId The id of the list that should have its icon changed.
-     * @param icon   The new icon.
-     */
+
     void changeIcon(UUID listId, @DrawableRes int icon);
 
     /**
@@ -121,5 +114,17 @@ public interface ListService {
      * @param color  The new icon.
      */
     void changeColor(UUID listId, @ColorInt int color);
+
+    void removeEntry(UUID listId, UUID entryId);
+
+
+    /**
+     * Unchecks all entries in a list.
+     * <p>
+     * This function does nothing if `listId` is invalid.
+     *
+     * @param listId The id of the list that should have its entries unchecked.
+     */
+
 
 }

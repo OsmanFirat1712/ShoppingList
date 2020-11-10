@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,15 +31,16 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class ListEditFragment extends Fragment {
 
-    private EditText editText;
+    private EditText etName;
     private ListService listService;
     private Button addButton;
     private View dice;
-    ImageView imageView;
+    ImageView ivIcon;
     private int random;
     private ConstraintLayout constraintLayout;
     private int mDefaultColor;
     private View colorPicker;
+    private ShoppingList shoppingList;
     private int icon;
 
 
@@ -50,12 +52,15 @@ public class ListEditFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.Liste);
+        if (getArguments() != null){
+            shoppingList = (ShoppingList) getArguments().getSerializable(KEYS.SHOPPINGLIST);
+        }
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.Liste);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         super.onCreate(savedInstanceState);
     }
 
@@ -76,69 +81,89 @@ public class ListEditFragment extends Fragment {
         inflater.inflate(R.menu.menu2, menu);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         listService = ((MyApp) getActivity().getApplication()).getListService();
-        editText = view.findViewById(R.id.etPrice);
-        imageView = view.findViewById(R.id.ivicon);
+        etName = view.findViewById(R.id.etPrice);
+        ivIcon = view.findViewById(R.id.ivicon);
         dice = view.findViewById(R.id.dice);
         addButton = view.findViewById(R.id.addButton);
 
         constraintLayout = view.findViewById(R.id.constraint);
         mDefaultColor = ContextCompat.getColor(getActivity(), R.color.design_default_color_on_primary);
         colorPicker = view.findViewById(R.id.colorPicker);
+
         super.onViewCreated(view, savedInstanceState);
+        if (shoppingList !=null){
+            ivIcon.setColorFilter(shoppingList.getColor());
+            etName.setText(shoppingList.getName());
+
+            if (shoppingList.getIcon() == 0) {
+                ivIcon.setImageResource(R.drawable.basket_24);
+            } else if (shoppingList.getIcon() == 1) {
+                ivIcon.setImageResource(R.drawable.book_24);
+            } else if (shoppingList.getIcon() == 2) {
+                ivIcon.setImageResource(R.drawable.store_24);
+            }
+
+
+        }
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addList();
+                if (shoppingList!= null){
+                    if ( !etName.getText().toString().isEmpty()) {
+                        listService.changeName(shoppingList.getId(),etName.getText().toString());
+                        listService.changeIcon(shoppingList.getId(), random);
+
+                    }
+                    getActivity().getSupportFragmentManager().popBackStack();
+                } else
+                    addList();
             }
         });
     }
 
     public void addList() {
 
-        if (editText.getText().toString().isEmpty()) {
+        if (etName.getText().toString().isEmpty()) {
             Toast.makeText(getContext(), "Bitte noch eine Modellnamen eingeben", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        listService.add(editText.getText().toString(), random, mDefaultColor);
+        listService.add(etName.getText().toString(), random, mDefaultColor);
         getActivity().getSupportFragmentManager().popBackStack();
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-           if (item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             ((MainActivity) getActivity()).getSupportFragmentManager().popBackStack();
             return true;
-        }
-
-
-      else   if (item.getItemId() == R.id.colorPicker) {
+        } else if (item.getItemId() == R.id.colorPicker) {
             mDefaultColor = ContextCompat.getColor(getActivity(), R.color.material_on_primary_emphasis_medium);
             openColorPicker();
-        }
-
-       else if (item.getItemId() == R.id.dice) {
+        } else if (item.getItemId() == R.id.dice) {
 
             if (random == 0) {
-                imageView.setImageResource(R.drawable.basket_24);
+                ivIcon.setImageResource(R.drawable.basket_24);
                 random = 1;
+                return true;
             } else if (random == 1) {
-                imageView.setImageResource(R.drawable.book_24   );
-                random  = 2;
+                ivIcon.setImageResource(R.drawable.book_24);
+                random = 2;
+                return true;
             } else if (random == 2) {
-                imageView.setImageResource(R.drawable.store_24);
-                random = 0;
+                ivIcon.setImageResource(R.drawable.store_24);
+                random = 3;
+                return true;
             }
-
 
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 
     public void openColorPicker() {
@@ -150,9 +175,11 @@ public class ListEditFragment extends Fragment {
             @Override
             public void onOk(AmbilWarnaDialog dialog, int color) {
                 mDefaultColor = color;
-                imageView.setBackgroundColor(color);
+                ivIcon.setBackgroundColor(color);
             }
         });
         colorPicker.show();
     }
-    }
+
+
+}

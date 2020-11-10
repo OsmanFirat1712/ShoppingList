@@ -17,24 +17,26 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
+public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
 
-
+    private CallBack callBack;
     private Context context;
     private ListService listService;
 
     public List <ShoppingList> shoppingLists;
 
-    public MyAdapter(List<ShoppingList> shoppingLists, ListService listService, Context context) {
-
+    public MyAdapter(List<ShoppingList> shoppingLists, ListService listService, Context context, CallBack callBack) {
         this.shoppingLists = shoppingLists;
         this.context = context;
         this.listService = listService;
+        this.callBack = callBack;
 
     }
 
@@ -67,9 +69,6 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
 
 
-
-
-
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView imageView;
         public TextView textView;
@@ -80,8 +79,6 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
             imageView = itemView.findViewById(R.id.ivicon);
             editText = itemView.findViewById(R.id.etPrice);
             textView = itemView.findViewById(R.id.tvName);
-
-
 
         }
     }
@@ -124,6 +121,13 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.imageView.setColorFilter(shoppingList.getColor());
 
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callBack.getList(shoppingList);
+            }
+        });
+
         holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
 
             @Override
@@ -131,15 +135,31 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 final AlertDialog dialog = new AlertDialog.Builder(context)
                         .setTitle(shoppingList.getName())
                         .setMessage("Wollen Sie die ausgewählte Liste wirklich Löschen?")
+                        .setNeutralButton("Cancel", null)
                         .setPositiveButton("Ok", null)
-                        .setNegativeButton("Cancel", null)
+                        .setNeutralButton("Bearbeiten", null)
                         .show();
 
+                Button neutralbutton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+                neutralbutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        callBack.editlist(shoppingList);
+                    }
+                });
+                Button negativebutton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                negativebutton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
                 Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 positiveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        shoppingLists.remove(shoppingList);
+
+                        callBack.remove(shoppingList.getId());
                         dialog.dismiss();
                         notifyItemRemoved(position);
                         notifyDataSetChanged();
@@ -147,22 +167,6 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 });
 
 
-               /* holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        AlertDialog.Builder alertDialogBuilderLabelEdit = new AlertDialog.Builder(getContext());
-                        alertDialogBuilderLabelEdit.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Boolean isSucces =
-                                        shoppingList.u
-                            }
-                        })
-
-                        return false;
-                    }
-                });
-*/
 
                 return false;
             }
@@ -170,13 +174,11 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder> {
         });
     }
 
-
-
     @Override
     public int getItemCount() {
         return shoppingLists.size();
     }
-    public void add ( List<ShoppingList> newList){
+    public void add2 ( List<ShoppingList> newList){
         this.shoppingLists = newList;
     }
 
