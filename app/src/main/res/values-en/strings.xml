@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ShoppingListOF</string>
+    <string name="Einkaufsliste" translatable="false">Shoppinglist</string>
+    <string name="anzahl_der_eintr_ge" translatable="false">List of Entries</string>
+    <string name="listen_bearbeiten" translatable="false">Edit List</string>
+    <string name="name" translatable="false">Name</string>
+    <string name="neue_liste" translatable="false">New List</string>
+    <string name="Supermarkt" translatable="false">Shopping Store</string>
+    <string name="Bücher" translatable="false">Books</string>
+    <string name="Drogerie" translatable="false">Drug Store</string>
+    <string name="Liste" translatable="false">List</string>
+</resources>

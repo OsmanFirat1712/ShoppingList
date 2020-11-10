@@ -17,6 +17,7 @@ public class SharedPrefdataStorage implements ListService {
     }
 
     Gson gson = new Gson();
+
     @Override
     public void safeList(List<ShoppingList> shoppingLists) {
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -36,38 +37,86 @@ public class SharedPrefdataStorage implements ListService {
     @Nullable
     @Override
     public ShoppingList shoppingList(UUID listId) {
-        return null;
+        ShoppingList shoppingList = null;
+        List<ShoppingList> shoppingLists = getShoppingList(SortOrder.Alphabetical);
+        for (int i = 0; i < shoppingLists.size(); i++) {
+            if (listId.equals(shoppingLists.get(i).getId())) {
+                shoppingList = shoppingLists.get(i);
+
+            }
+        }
+        return shoppingList;
     }
 
     @Override
     public void add(String name, int icon, int color) {
         List<ShoppingList> shoppingLists = getShoppingList(SortOrder.Alphabetical);
-        shoppingLists.add(new ShoppingList(UUID.randomUUID(),name, icon, color));
+        shoppingLists.add(new ShoppingList(UUID.randomUUID(), name, icon, color));
         safeList(shoppingLists);
     }
 
     @Override
     public void remove(UUID listId) {
+        List<ShoppingList> allshoppingLists = getShoppingList(SortOrder.Alphabetical);
+        for (int i = 0; i < allshoppingLists.size(); i++) {
+            if (listId.equals(allshoppingLists.get(i).getId())) {
+                allshoppingLists.remove(i);
+                break;
+            }
+        }
+        safeList(allshoppingLists);
+
 
     }
 
     @Override
     public void addEntry(UUID listId, String name) {
 
+        List<ShoppingList> shoppingLists = getShoppingList(SortOrder.Alphabetical);
+        for (int i = 0; i < shoppingLists.size(); i++) {
+            if (listId.equals(shoppingLists.get(i).getId())) {
+                shoppingLists.get(i).getUncheckedEntries().add(new ShoppingListEntry(listId, name, false));
+            }
+
+
+        }
+        safeList(shoppingLists);
     }
 
     @Override
     public void checkEntry(UUID listId, int row) {
+        List<ShoppingList> shoppingLists = getShoppingList(SortOrder.Alphabetical);
+        for (int i = 0; i < shoppingLists.size(); i++) {
+            if (listId.equals(shoppingLists.get(i).getId())) {
+                ShoppingListEntry shop = shoppingLists.get(i).getUncheckedEntries().get(row);
+                shoppingLists.get(i).getUncheckedEntries().remove(row);
+                shop.setChecked(true);
+                shoppingLists.get(i).getCheckedEntries().add(shop);
+            }
 
+
+        }
+        safeList(shoppingLists);
     }
 
     @Override
     public void uncheckEntry(UUID listId, int row) {
+        List<ShoppingList> shoppingLists = getShoppingList(SortOrder.Alphabetical);
+        for (int i = 0; i < shoppingLists.size(); i++) {
+            if (listId.equals(shoppingLists.get(i).getId())) {
+                ShoppingListEntry shop = shoppingLists.get(i).getCheckedEntries().get(row - shoppingLists.get(i).getUncheckedEntries().size());
+                shoppingLists.get(i).getCheckedEntries().remove(row - shoppingLists.get(i).getUncheckedEntries().size());
+                shop.setChecked(false);
+                shoppingLists.get(i).getUncheckedEntries().add(shop);
 
+            }
+        }
+        safeList(shoppingLists);
     }
 
     @Override
     public void uncheckAllEntries(UUID listId) {
+
 
     }
 
@@ -84,5 +133,26 @@ public class SharedPrefdataStorage implements ListService {
     @Override
     public void changeColor(UUID listId, int color) {
 
+    }
+
+    @Override
+    public void removeEntry(UUID listId, UUID entryId) {
+        List<ShoppingList> shoppingLists = getShoppingList(SortOrder.Alphabetical);
+        for (int i = 0; i < shoppingLists.size(); i++) {
+            if (listId.equals(shoppingLists.get(i).getId())) {
+                for (int j = 0; j < shoppingLists.get(i).getCheckedEntries().size(); j++) {
+                    if (entryId.equals(shoppingLists.get(i).getCheckedEntries().get(j).getId())) {
+                        shoppingLists.get(i).getCheckedEntries().remove(j);
+                    }
+                }
+                for (int j = 0; j < shoppingLists.get(i).getUncheckedEntries().size(); j++) {
+                    if (entryId.equals(shoppingLists.get(i).getUncheckedEntries().get(j).getId())) {
+                        shoppingLists.get(i).getUncheckedEntries().remove(j);
+                    }
+                }
+
+            }
+        }
+        safeList(shoppingLists);
     }
 }

@@ -25,19 +25,21 @@ import com.github.dhaval2404.colorpicker.model.ColorShape;
 import com.github.dhaval2404.colorpicker.model.ColorSwatch;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements CallBack {
     private FloatingActionButton floatingActionButton;
     private ListService listService;
     private MyAdapter myAdapter;
     private GridLayoutManager gridLayoutManager;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-
+    private ShoppingList shoppingList;
 
     public MainFragment() {
 
@@ -65,7 +67,7 @@ public class MainFragment extends Fragment {
         recyclerView = getActivity().findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         listService = ((MyApp) getActivity().getApplication()).getListService();
-        myAdapter = new MyAdapter(listService.getShoppingList(ListService.SortOrder.Alphabetical), this.listService, getContext());
+        myAdapter = new MyAdapter(listService.getShoppingList(ListService.SortOrder.Alphabetical),  this.listService, getContext(),this);
         recyclerView.setAdapter(myAdapter);
 
 
@@ -81,7 +83,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onResume() {
-        myAdapter.add(listService.getShoppingList(ListService.SortOrder.Alphabetical));
+        myAdapter.add2(listService.getShoppingList(ListService.SortOrder.Alphabetical));
         myAdapter.notifyDataSetChanged();
         super.onResume();
     }
@@ -91,6 +93,7 @@ public class MainFragment extends Fragment {
         listService.safeList(myAdapter.getShoppingLists());
         super.onPause();
     }
+
 
     private void startDetailListFragment() {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -104,6 +107,42 @@ public class MainFragment extends Fragment {
         actionbar.setHomeButtonEnabled(false);
         actionbar.setDisplayHomeAsUpEnabled(false);
         actionbar.setTitle(R.string.Einkaufsliste);
+
+    }
+
+    @Override
+    public void getList(ShoppingList checkedUnchecked) {
+
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        ListEntriesFragment details = new ListEntriesFragment();
+        Bundle arg = new Bundle();
+        arg.putSerializable(KEYS.CHECKED,checkedUnchecked.getId());
+        details.setArguments(arg);
+        transaction.replace(R.id.container, details);
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+    }
+
+    @Override
+    public void remove(UUID uuid) {
+            listService.remove(uuid);
+            myAdapter.setShoppingLists(listService.getShoppingList(ListService.SortOrder.Alphabetical));
+            myAdapter.notifyDataSetChanged();
+        }
+
+
+    @Override
+    public void editlist(ShoppingList shoppingList) {
+
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        ListEditFragment details = new ListEditFragment();
+        Bundle arg = new Bundle();
+        arg.putSerializable(KEYS.SHOPPINGLIST,shoppingList);
+        details.setArguments(arg);
+        transaction.replace(R.id.container, details);
+        transaction.addToBackStack(null);
+        transaction.commit();
 
     }
 
