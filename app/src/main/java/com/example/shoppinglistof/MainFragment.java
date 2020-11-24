@@ -1,36 +1,22 @@
 package com.example.shoppinglistof;
-import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog;
-import com.github.dhaval2404.colorpicker.model.ColorShape;
-import com.github.dhaval2404.colorpicker.model.ColorSwatch;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class MainFragment extends Fragment implements CallBack {
     private FloatingActionButton floatingActionButton;
@@ -39,7 +25,9 @@ public class MainFragment extends Fragment implements CallBack {
     private GridLayoutManager gridLayoutManager;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private ShoppingList shoppingList;
+    private ShoppingList shoppingLisst;
+    private ApiListService apiListService;
+    private List<ShoppingList> shoppingListList;
 
     public MainFragment() {
 
@@ -64,11 +52,17 @@ public class MainFragment extends Fragment implements CallBack {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         addicontoolbar();
+        apiListService = ((MyApp) getActivity().getApplication()).getApiListService();
+        listService = ((MyApp) getActivity().getApplication()).getListService();
+
         recyclerView = getActivity().findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        listService = ((MyApp) getActivity().getApplication()).getListService();
-        myAdapter = new MyAdapter(listService.getShoppingList(ListService.SortOrder.Alphabetical),  this.listService, getContext(),this);
+        myAdapter = new MyAdapter(new ArrayList<>(), getContext(), MainFragment.this);
+
         recyclerView.setAdapter(myAdapter);
+        recyclerView.setHasFixedSize(true);
+
+
 
 
         floatingActionButton = view.findViewById(R.id.floatingButton);
@@ -83,14 +77,20 @@ public class MainFragment extends Fragment implements CallBack {
 
     @Override
     public void onResume() {
-        myAdapter.add2(listService.getShoppingList(ListService.SortOrder.Alphabetical));
-        myAdapter.notifyDataSetChanged();
         super.onResume();
+        apiListService.getShoppingList(ApiListService.SortOrder.Alphabetical, new GetShoppingListsCallBack() {
+            @Override
+            public void onShopppingListsLoaded(List<ShoppingList> shoppingLists) {
+                myAdapter.add2(shoppingLists);
+                myAdapter.notifyDataSetChanged();
+            }
+        });
+
     }
 
     @Override
     public void onPause() {
-        listService.safeList(myAdapter.getShoppingLists());
+  /*      listService.safeList(myAdapter.getShoppingLists());*/
         super.onPause();
     }
 
@@ -126,9 +126,25 @@ public class MainFragment extends Fragment implements CallBack {
 
     @Override
     public void remove(UUID uuid) {
-            listService.remove(uuid);
+
+
+            apiListService.remove(uuid, new CompletionCallBack() {
+                @Override
+                public void onComplete() {
+
+                }
+            });
+
+            apiListService.getShoppingList(ApiListService.SortOrder.Alphabetical,new GetShoppingListsCallBack() {
+            @Override
+            public void onShopppingListsLoaded(List<ShoppingList> shoppingLists) {
+                myAdapter.setShoppingLists(shoppingLists);
+                myAdapter.notifyDataSetChanged();
+            }
+        });
+          /*  listService.remove(uuid);
             myAdapter.setShoppingLists(listService.getShoppingList(ListService.SortOrder.Alphabetical));
-            myAdapter.notifyDataSetChanged();
+            myAdapter.notifyDataSetChanged();*/
         }
 
 
@@ -143,6 +159,12 @@ public class MainFragment extends Fragment implements CallBack {
         transaction.replace(R.id.container, details);
         transaction.addToBackStack(null);
         transaction.commit();
+
+    }
+
+    private void getData () {
+
+
 
     }
 

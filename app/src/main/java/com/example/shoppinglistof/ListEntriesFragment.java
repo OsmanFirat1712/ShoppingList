@@ -41,11 +41,11 @@ public class ListEntriesFragment extends Fragment implements BackCall {
     private UUID uuid;
     private ShoppingList shoppingList;
     private TextView tventry;
-
+    private  ApiListService apiListService;
+    private String entries;
     public ListEntriesFragment() {
 
     }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +60,8 @@ public class ListEntriesFragment extends Fragment implements BackCall {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
     }
-
     @Nullable
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recylerview2, container, false);
@@ -70,15 +70,17 @@ public class ListEntriesFragment extends Fragment implements BackCall {
 
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        apiListService = ((MyApp) getActivity().getApplication()).getApiListService();
+
         listService = ((MyApp) getActivity().getApplication()).getListService();
         recyclerViewCheckedunChecked = getActivity().findViewById(R.id.my_recycler_view_unchecked);
 
+
         recyclerViewCheckedunChecked.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        listEntriesAdapter = new ListEntriesAdapter(this.listService, getContext(), this);
+        listEntriesAdapter = new ListEntriesAdapter(this.apiListService, getContext(), ListEntriesFragment.this);
         recyclerViewCheckedunChecked.setAdapter(listEntriesAdapter);
 
         fbtalert = view.findViewById(R.id.fbtalert);
@@ -96,16 +98,18 @@ public class ListEntriesFragment extends Fragment implements BackCall {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        listService.addEntry(uuid, editText.getText().toString());
-                        listEntriesAdapter.notifyDataSetChanged();
+                        apiListService.addEntry(uuid, entries, new CompletionCallBack() {
+                            @Override
+                            public void onComplete() {
+                                setShopping();
+                                getActivity().getSupportFragmentManager();
+                                dialog.dismiss();
+                            }
+                        });
+                     /*   listService.addEntry(uuid, editText.getText().toString());
                         allEntrys = new ArrayList<>();
-                        shoppingList = listService.shoppingList(uuid);
-                        allEntrys.addAll(shoppingList.getCheckedEntries());
-                        allEntrys.addAll(shoppingList.getUncheckedEntries());
-                        listEntriesAdapter.addsavelist(allEntrys);
-                        listEntriesAdapter.notifyDataSetChanged();
-                        getActivity().getSupportFragmentManager();
-                        dialog.dismiss();
+                        listEntriesAdapter.notifyDataSetChanged()*/;
+
 
                     }
                 });
@@ -139,8 +143,20 @@ public class ListEntriesFragment extends Fragment implements BackCall {
     public void addEntry(ShoppingListEntry shoppingListEntry, int position) {
 
         if (shoppingListEntry.isChecked()) {
-            listService.uncheckEntry(uuid, position);
+            apiListService.uncheckEntry(uuid, shoppingListEntry.getId(), new CompletionCallBack() {
+                @Override
+                public void onComplete() {
+                    setShopping();
+                }
+            });
+
         } else {
+            apiListService.checkEntry(uuid, shoppingListEntry.getId(), new CompletionCallBack() {
+                @Override
+                public void onComplete() {
+                setShopping();
+                }
+            });
             listService.checkEntry(uuid, position);
         }
         setShopping();
@@ -162,12 +178,21 @@ public class ListEntriesFragment extends Fragment implements BackCall {
     }
 
     public  void setShopping(){
-        allEntrys = new ArrayList<>();
-        shoppingList = listService.shoppingList(uuid);
-        allEntrys.addAll(shoppingList.getUncheckedEntries());
-        allEntrys.addAll(shoppingList.getCheckedEntries());
-        listEntriesAdapter.addsavelist(allEntrys);
-        listEntriesAdapter.notifyDataSetChanged();
+
+
+        apiListService.ShoppingList(uuid, new CompletionCallBack() {
+            @Override
+            public void onComplete() {
+                allEntrys = new ArrayList<>();
+                allEntrys.addAll(shoppingList.getUncheckedEntries());
+                allEntrys.addAll(shoppingList.getCheckedEntries());
+                listEntriesAdapter.addsavelist(allEntrys);
+                listEntriesAdapter.notifyDataSetChanged();
+
+            }
+        });
+
+
     }
 
     public void addicontoolbar() {

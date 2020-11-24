@@ -117,7 +117,6 @@ public class SharedPrefdataStorage implements ListService {
     @Override
     public void uncheckAllEntries(UUID listId) {
 
-
     }
 
     @Override

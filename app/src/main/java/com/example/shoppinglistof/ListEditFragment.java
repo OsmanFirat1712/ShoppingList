@@ -42,6 +42,7 @@ public class ListEditFragment extends Fragment {
     private View colorPicker;
     private ShoppingList shoppingList;
     private int icon;
+    private ApiListService apiListService;
 
 
     public ListEditFragment() {
@@ -51,6 +52,8 @@ public class ListEditFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        apiListService = ((MyApp) getActivity().getApplication()).getApiListService();
+
 
         if (getArguments() != null){
             shoppingList = (ShoppingList) getArguments().getSerializable(KEYS.SHOPPINGLIST);
@@ -115,9 +118,8 @@ public class ListEditFragment extends Fragment {
             public void onClick(View v) {
                 if (shoppingList!= null){
                     if ( !etName.getText().toString().isEmpty()) {
-                        listService.changeName(shoppingList.getId(),etName.getText().toString());
-                        listService.changeIcon(shoppingList.getId(), random);
-
+                        apiListService.changeName(shoppingList.getId(),etName.getText().toString());
+                        apiListService.changeIcon(shoppingList.getId(), random);
                     }
                     getActivity().getSupportFragmentManager().popBackStack();
                 } else
@@ -133,8 +135,23 @@ public class ListEditFragment extends Fragment {
             return;
         }
 
-        listService.add(etName.getText().toString(), random, mDefaultColor);
-        getActivity().getSupportFragmentManager().popBackStack();
+        apiListService.add(etName.getText().toString(), random, mDefaultColor, new ListSave() {
+            @Override
+            public void listToSave() {
+
+
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                });
+
+
+            }
+        });
+
     }
 
     @Override

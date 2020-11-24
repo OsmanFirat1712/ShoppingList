@@ -24,17 +24,21 @@ public class ListEntriesAdapter extends RecyclerView.Adapter<ListEntriesAdapter.
         private Context context;
         private ListService listService;
         private BackCall backCall;
+        private GetShoppingListsCallBack getShoppingListsCallBack;
+        private ApiListService apiListService;
 
 
         public List<ShoppingListEntry> unchecked;
 
 
-        public ListEntriesAdapter(ListService listService, Context context,BackCall backCall) {
+        public ListEntriesAdapter( ApiListService apiListService, Context context,BackCall backCall) {
 
             this.context = context;
             this.listService = listService;
             this.unchecked = new ArrayList<>();
+            this.getShoppingListsCallBack= getShoppingListsCallBack;
             this.backCall = backCall;
+            this.apiListService = apiListService;
 
         }
 

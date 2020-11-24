@@ -28,14 +28,16 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
 
     private CallBack callBack;
     private Context context;
+    private ApiListService apiListService;
     private ListService listService;
+    private GetShoppingListsCallBack getShoppingListsCallBack;
 
     public List <ShoppingList> shoppingLists;
 
-    public MyAdapter(List<ShoppingList> shoppingLists, ListService listService, Context context, CallBack callBack) {
+    public MyAdapter(List<ShoppingList> shoppingLists, Context context,CallBack callBack) {
         this.shoppingLists = shoppingLists;
         this.context = context;
-        this.listService = listService;
+
         this.callBack = callBack;
 
     }

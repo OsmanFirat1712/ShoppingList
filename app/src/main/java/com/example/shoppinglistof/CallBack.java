@@ -1,6 +1,5 @@
 package com.example.shoppinglistof;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface CallBack {
