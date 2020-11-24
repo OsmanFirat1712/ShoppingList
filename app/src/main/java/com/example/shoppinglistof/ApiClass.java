@@ -70,18 +70,18 @@ public class ApiClass implements ApiListService {
                                     false
                             ));
                         }
-
+                    }
 
                         int icon;
                         switch (remoteItem.getIcon()) {
-                            case "icon 1":
-                                icon = R.drawable.store_24;
+                            case "icon1":
+                                icon = R.drawable.basket_24;
                                 break;
-                            case "icon 2":
+                            case "icon2":
                                 icon = R.drawable.book_24;
                                 break;
-                            case "icon 3":
-                                icon = R.drawable.basket_24;
+                            case "icon3":
+                                icon = R.drawable.store_24;
                                 break;
 
 
@@ -117,14 +117,13 @@ public class ApiClass implements ApiListService {
 
                 }
 
-
-            }
             @Override
             public void onFailure(Call<List<RemoteShoppingList>> call, Throwable t) {
-                    t.printStackTrace();
-            }
-        });
 
+            }
+
+
+        });
     }
 
 
@@ -142,7 +141,7 @@ public class ApiClass implements ApiListService {
 
 
                 for (RemoteShoppingListEntry remoteEntry : remoteItem.getshoppinglistentries()) {
-                    if (remoteEntry.isChecked()==1) {
+                    if (remoteEntry.isChecked() == 1) {
                         checkedEntries.add(new ShoppingListEntry(
                                 UUID.fromString(remoteEntry.getId()),
                                 remoteEntry.getName(),
@@ -156,18 +155,23 @@ public class ApiClass implements ApiListService {
 
                         ));
                     }
-
+                }
                     int icon;
                     switch (remoteItem.getIcon()) {
-                        case "icon 1":
+                        case "icon1":
                             icon = R.drawable.basket_24;
                             break;
-                        case "icon 2":
-                            icon = R.drawable.store_24;
+                        case "icon2":
+                            icon = R.drawable.book_24;
+                            break;
+                        case "icon3":
+                            icon = R.drawable.book_24;
                             break;
 
+
+
                         default:
-                            icon = R.drawable.book_24;
+                            icon = R.drawable.basket_24;
 
                     }
                     int color= Color.parseColor("#FF2000");
@@ -191,10 +195,10 @@ public class ApiClass implements ApiListService {
                             completionCallBack.onComplete();
 
                 }
-            }
+
             @Override
             public void onFailure(Call<RemoteShoppingList> call, Throwable t) {
-            t.printStackTrace();
+
             }
         });
     }
