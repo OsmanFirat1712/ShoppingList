@@ -1,4 +1,5 @@
 package com.example.shoppinglistof;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import room.DataBase;
+
 public class MainFragment extends Fragment implements CallBack {
     private FloatingActionButton floatingActionButton;
     private ListService listService;
@@ -28,10 +31,12 @@ public class MainFragment extends Fragment implements CallBack {
     private ShoppingList shoppingLisst;
     private ApiListService apiListService;
     private List<ShoppingList> shoppingListList;
+    private DataBase dataBase;
 
     public MainFragment() {
 
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,8 +66,7 @@ public class MainFragment extends Fragment implements CallBack {
 
         recyclerView.setAdapter(myAdapter);
         recyclerView.setHasFixedSize(true);
-
-
+        dataBase.getInstance(getContext()).shoppingDao().getAll();
 
 
         floatingActionButton = view.findViewById(R.id.floatingButton);
@@ -85,12 +89,13 @@ public class MainFragment extends Fragment implements CallBack {
                 myAdapter.notifyDataSetChanged();
             }
         });
+        dataBase.shoppingDao().getAll();
 
     }
 
     @Override
     public void onPause() {
-  /*      listService.safeList(myAdapter.getShoppingLists());*/
+        /*      listService.safeList(myAdapter.getShoppingLists());*/
         super.onPause();
     }
 
@@ -116,7 +121,7 @@ public class MainFragment extends Fragment implements CallBack {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         ListEntriesFragment details = new ListEntriesFragment();
         Bundle arg = new Bundle();
-        arg.putSerializable(KEYS.CHECKED,checkedUnchecked.getId());
+        arg.putSerializable(KEYS.CHECKED, checkedUnchecked.getId());
         details.setArguments(arg);
         transaction.replace(R.id.container, details);
         transaction.addToBackStack(null);
@@ -128,14 +133,14 @@ public class MainFragment extends Fragment implements CallBack {
     public void remove(UUID uuid) {
 
 
-            apiListService.remove(uuid, new CompletionCallBack() {
-                @Override
-                public void onComplete() {
+        apiListService.remove(uuid, new CompletionCallBack() {
+            @Override
+            public void onComplete() {
 
-                }
-            });
+            }
+        });
 
-            apiListService.getShoppingList(ApiListService.SortOrder.Alphabetical,new GetShoppingListsCallBack() {
+        apiListService.getShoppingList(ApiListService.SortOrder.Alphabetical, new GetShoppingListsCallBack() {
             @Override
             public void onShopppingListsLoaded(List<ShoppingList> shoppingLists) {
                 myAdapter.setShoppingLists(shoppingLists);
@@ -145,7 +150,7 @@ public class MainFragment extends Fragment implements CallBack {
           /*  listService.remove(uuid);
             myAdapter.setShoppingLists(listService.getShoppingList(ListService.SortOrder.Alphabetical));
             myAdapter.notifyDataSetChanged();*/
-        }
+    }
 
 
     @Override
@@ -154,16 +159,17 @@ public class MainFragment extends Fragment implements CallBack {
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         ListEditFragment details = new ListEditFragment();
         Bundle arg = new Bundle();
-        arg.putSerializable(KEYS.SHOPPINGLIST,shoppingList);
+        arg.putSerializable(KEYS.SHOPPINGLIST, shoppingList);
         details.setArguments(arg);
         transaction.replace(R.id.container, details);
         transaction.addToBackStack(null);
         transaction.commit();
 
+
     }
 
-    private void getData () {
 
+    private void getData() {
 
 
     }

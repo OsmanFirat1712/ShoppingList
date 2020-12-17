@@ -11,13 +11,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.widget.GridLayout;
 
+import java.util.concurrent.Callable;
 import java.util.zip.Inflater;
+
+import room.DataBase;
+import room.TaskRunner;
 
 public class MainActivity extends AppCompatActivity {
 
     private GridLayoutManager gridLayoutManager;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
+    private DataBase dataBase;
 
     public MainActivity() {
     }
@@ -35,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView= findViewById(R.id.my_recycler_view);
         layoutManager = new GridLayoutManager(this, 2);
+/*
+        dataBase.getInstance(this).shoppingDao().getAll();
+*/
 
         Toolbar toolbar = findViewById(R.id.toolbarmain);
         setSupportActionBar(toolbar);
@@ -46,7 +54,22 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, new MainFragment());
         transaction.commit();
+/*
 
+        TaskRunner runner = new TaskRunner();
+        runner.executeAsync(() -> {
+            dataBase.shoppingDao().getAll();
+            return null;
+        }, (result) -> {
+            closeContextMenu();
+            Callable<Object> callable = new Callable<Object>() {
+                public Object call() throws Exception {
+
+
+                }
+            };
+        });
+*/
 
 
     }

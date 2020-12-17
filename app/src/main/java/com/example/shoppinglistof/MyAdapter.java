@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
+public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     private CallBack callBack;
     private Context context;
@@ -32,9 +32,9 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
     private ListService listService;
     private GetShoppingListsCallBack getShoppingListsCallBack;
 
-    public List <ShoppingList> shoppingLists;
+    public List<ShoppingList> shoppingLists;
 
-    public MyAdapter(List<ShoppingList> shoppingLists, Context context,CallBack callBack) {
+    public MyAdapter(List<ShoppingList> shoppingLists, Context context, CallBack callBack) {
         this.shoppingLists = shoppingLists;
         this.context = context;
 
@@ -64,14 +64,12 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
     }
 
 
-
     public void setContext(Context context) {
         this.context = context;
     }
 
 
-
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
         public TextView textView;
         public EditText editText;
@@ -88,7 +86,7 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
     @NonNull
     @Override
     public MyAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.myrecylerview,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.myrecylerview, parent, false);
 
         ViewHolder vh = new ViewHolder(v);
 
@@ -101,9 +99,9 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
         final ShoppingList shoppingList = shoppingLists.get(position);
 
         int icons;
-        switch (shoppingList.getIcon()){
+        switch (shoppingList.getIcon()) {
             case 1:
-                icons =  R.drawable.basket_24;
+                icons = R.drawable.basket_24;
                 break;
 
             case 2:
@@ -169,7 +167,6 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
                 });
 
 
-
                 return false;
             }
 
@@ -180,7 +177,8 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
     public int getItemCount() {
         return shoppingLists.size();
     }
-    public void add2 ( List<ShoppingList> newList){
+
+    public void add2(List<ShoppingList> newList) {
         this.shoppingLists = newList;
     }
 

@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import room.DaoListService;
+import room.DataBase;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class ListEditFragment extends Fragment {
@@ -43,6 +45,7 @@ public class ListEditFragment extends Fragment {
     private ShoppingList shoppingList;
     private int icon;
     private ApiListService apiListService;
+    private DaoListService daoListService;
 
 
     public ListEditFragment() {
@@ -55,7 +58,7 @@ public class ListEditFragment extends Fragment {
         apiListService = ((MyApp) getActivity().getApplication()).getApiListService();
 
 
-        if (getArguments() != null){
+        if (getArguments() != null) {
             shoppingList = (ShoppingList) getArguments().getSerializable(KEYS.SHOPPINGLIST);
         }
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -98,7 +101,7 @@ public class ListEditFragment extends Fragment {
         colorPicker = view.findViewById(R.id.colorPicker);
 
         super.onViewCreated(view, savedInstanceState);
-        if (shoppingList !=null){
+        if (shoppingList != null) {
             ivIcon.setColorFilter(shoppingList.getColor());
             etName.setText(shoppingList.getName());
 
@@ -116,9 +119,9 @@ public class ListEditFragment extends Fragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (shoppingList!= null){
-                    if ( !etName.getText().toString().isEmpty()) {
-                        apiListService.changeName(shoppingList.getId(),etName.getText().toString());
+                if (shoppingList != null) {
+                    if (!etName.getText().toString().isEmpty()) {
+                        apiListService.changeName(shoppingList.getId(), etName.getText().toString());
                         apiListService.changeIcon(shoppingList.getId(), random);
                     }
                     getActivity().getSupportFragmentManager().popBackStack();
@@ -135,10 +138,10 @@ public class ListEditFragment extends Fragment {
             return;
         }
 
+        DataBase.getInstance(getContext()).shoppingDao().add();
         apiListService.add(etName.getText().toString(), random, mDefaultColor, new ListSave() {
             @Override
             public void listToSave() {
-
 
 
                 getActivity().runOnUiThread(new Runnable() {

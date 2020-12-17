@@ -41,11 +41,14 @@ public class ListEntriesFragment extends Fragment implements BackCall {
     private UUID uuid;
     private ShoppingList shoppingList;
     private TextView tventry;
-    private  ApiListService apiListService;
+    private ApiListService apiListService;
     private String entries;
+
+
     public ListEntriesFragment() {
 
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +63,7 @@ public class ListEntriesFragment extends Fragment implements BackCall {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
     }
+
     @Nullable
 
     @Override
@@ -108,7 +112,8 @@ public class ListEntriesFragment extends Fragment implements BackCall {
                         });
                      /*   listService.addEntry(uuid, editText.getText().toString());
                         allEntrys = new ArrayList<>();
-                        listEntriesAdapter.notifyDataSetChanged()*/;
+                        listEntriesAdapter.notifyDataSetChanged()*/
+                        ;
 
 
                     }
@@ -130,8 +135,8 @@ public class ListEntriesFragment extends Fragment implements BackCall {
     @Override
     public void onResume() {
         super.onResume();
-        setShopping();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(shoppingList.getName());
+        /*setShopping();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(shoppingList.getName());*/
     }
 
     @Override
@@ -154,7 +159,7 @@ public class ListEntriesFragment extends Fragment implements BackCall {
             apiListService.checkEntry(uuid, shoppingListEntry.getId(), new CompletionCallBack() {
                 @Override
                 public void onComplete() {
-                setShopping();
+                    setShopping();
                 }
             });
             listService.checkEntry(uuid, position);
@@ -177,10 +182,10 @@ public class ListEntriesFragment extends Fragment implements BackCall {
         return false;
     }
 
-    public  void setShopping(){
+    public void setShopping() {
 
 
-        apiListService.ShoppingList(uuid, new CompletionCallBack() {
+/*        apiListService.ShoppingList(uuid, new CompletionCallBack() {
             @Override
             public void onComplete() {
                 allEntrys = new ArrayList<>();
@@ -190,7 +195,7 @@ public class ListEntriesFragment extends Fragment implements BackCall {
                 listEntriesAdapter.notifyDataSetChanged();
 
             }
-        });
+        });*/
 
 
     }

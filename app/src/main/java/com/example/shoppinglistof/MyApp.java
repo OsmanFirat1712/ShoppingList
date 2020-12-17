@@ -4,6 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.room.Dao;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -12,6 +17,11 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import remote.RemoteShoppingList;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import room.DAO;
+import room.DaoListInterface;
+import room.DaoListService;
+import room.DataBase;
+import room.ShoppingList;
 import timber.log.Timber;
 
 public class MyApp extends Application {
@@ -20,7 +30,7 @@ public class MyApp extends Application {
     private ListService listService;
     private ApiListService apiListService;
     private RemoteShoppingList remoteShoppingList;
-
+    private DaoListInterface daoListInterface;
 
 
     ShoppingListApi shoppingListApi = null;
@@ -41,6 +51,11 @@ public class MyApp extends Application {
                 .create();*/
     }
 
+
+    public DaoListInterface getDaoListInterface() {
+        return daoListInterface;
+    }
+
     public ApiListService getApiListService() {
         return apiListService;
     }
@@ -56,11 +71,11 @@ public class MyApp extends Application {
                 .build();
 
 
-        if  ( shoppingListApi  == null){
-            shoppingListApi  = new Retrofit.Builder()
+        if (shoppingListApi == null) {
+            shoppingListApi = new Retrofit.Builder()
                     .client(okHttpClient)
                     .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(new Gson()))
                     .build()
                     .create(ShoppingListApi.class);
 

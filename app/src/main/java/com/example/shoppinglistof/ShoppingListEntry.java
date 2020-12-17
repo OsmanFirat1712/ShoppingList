@@ -4,26 +4,32 @@ import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
+@Entity
 public class ShoppingListEntry implements Serializable {
 
-    @NonNull
+    @PrimaryKey
     private UUID id;
 
-    @NonNull
+    @ColumnInfo(name = "name")
     private String name;
 
+    @ColumnInfo(name = "checked")
     private boolean checked;
 
     public ShoppingListEntry(@NonNull UUID id, @NonNull String name, boolean checked) {
-        if(id == null) {
+        if (id == null) {
             throw new IllegalArgumentException("id must not be null");
         }
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException("name must not be null");
         }
         this.id = id;
@@ -37,7 +43,7 @@ public class ShoppingListEntry implements Serializable {
     }
 
     public void setId(@NonNull UUID id) {
-        if(id == null) {
+        if (id == null) {
             throw new IllegalArgumentException("id must not be null");
         }
         this.id = id;
@@ -49,7 +55,7 @@ public class ShoppingListEntry implements Serializable {
     }
 
     public void setName(@NonNull String name) {
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException("name must not be null");
         }
         this.name = name;

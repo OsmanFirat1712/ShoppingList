@@ -39,9 +39,11 @@ public class ApiClass implements ApiListService {
 
     public ApiClass(ShoppingListApi shoppingListApi) {
         this.shoppingListApi = shoppingListApi;
+
         gson = new GsonBuilder()
                 .create();
     }
+
 
 
     @Override
@@ -114,6 +116,7 @@ public class ApiClass implements ApiListService {
 
 
                     callBack.onShopppingListsLoaded(mappedList);
+
 
                 }
 

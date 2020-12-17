@@ -23,14 +23,14 @@ public interface ShoppingListApi {
     @POST("shoppinglists")
     Call<ResponseBody> addShoppingList(@Body ShoppingList shoppingList);
 
-    @GET("shoppinglists/{id}")
-    Call<RemoteShoppingList> getShoppingList(@Path("id ")String id);
+    @GET("/api/v1/shoppinglists/{shoppinglist}")
+    Call<RemoteShoppingList> getShoppingList(@Path("shoppinglist ")String listId);
 
     @PUT("shoppinglists/{id}")
     Call<ResponseBody> editShoppingList (@Path("id") String id,@Body ShoppingList shoppingList);
 
-    @DELETE("shoppinglists/{id}")
-    Call<ResponseBody> deleteShoppingList(@Path("ic ")String listId);
+    @DELETE("/api/v1/shoppinglists/{shoppinglist}")
+    Call<ResponseBody> deleteShoppingList(@Path("shopppinglist ")String listId);
 
 
 

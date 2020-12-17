@@ -6,6 +6,10 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Entity
 public class ShoppingList implements Serializable {
 
     enum Category {
@@ -21,22 +26,23 @@ public class ShoppingList implements Serializable {
     }
 
     @NonNull
+    @PrimaryKey
     private UUID id;
 
-    @NonNull
+    @ColumnInfo(name = "name")
     private String name;
 
-    @DrawableRes
+    @ColumnInfo(name = "icon")
     private int icon;
 
-    @ColorInt
+    @ColumnInfo(name = "color")
     private int color;
 
     @NonNull
-    private List<ShoppingListEntry> checkedEntries;
+    private transient List<ShoppingListEntry> checkedEntries;
 
     @NonNull
-    private List<ShoppingListEntry> uncheckedEntries;
+    private transient List<ShoppingListEntry> uncheckedEntries;
 
 
     public ShoppingList(@NonNull UUID id, @NonNull String name, int icon, int color, @NonNull List<ShoppingListEntry> checkedEntries, @NonNull List<ShoppingListEntry> uncheckedEntries) {
