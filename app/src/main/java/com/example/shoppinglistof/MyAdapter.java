@@ -127,6 +127,10 @@ public class MyAdapter extends  RecyclerView.Adapter<MyAdapter.ViewHolder  > {
                 callBack.getList(shoppingList);
             }
         });
+        AlertDialog.Builder(context)
+                .setNeutralButton(R.string.cancelButton) { dialogInterface, i->}
+                    .setNegativeButton(R.string.delete) { dialogInterface, i-> }
+                    .create().show()
 
         holder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
 
