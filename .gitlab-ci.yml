@@ -18,6 +18,6 @@ build:
     - android
   artifacts:
     paths:
-      - app/build/outputs/apk/*/release/*.apk
+      - app/build/outputs/apk/release/*.apk
   only:
     - tags
