@@ -1,0 +1,23 @@
+stages:
+  - test
+  - build
+
+test:
+  stage: test
+  script:
+    - chmod +x gradlew
+    - ./gradlew clean app:test
+  tags:
+    - android
+
+build:
+  stage: build
+  script:
+    - ./gradlew :app:assembleRelease
+  tags:
+    - android
+  artifacts:
+    paths:
+      - app/build/outputs/apk/*/release/*.apk
+  only:
+    - tags
