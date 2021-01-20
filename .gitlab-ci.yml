@@ -4,7 +4,8 @@ stages:
 
 test:
   stage: test
-  - chmod +x gradlew
+  script:
+    - chmod +x gradlew
     - ./gradlew clean app:test
   tags:
     - android
